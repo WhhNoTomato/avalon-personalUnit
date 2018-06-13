@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>分页组件</title>
+<script src="../lib/jquery.js" ></script>
+<script src="../lib/avalon2.js" ></script>
+<script src="../lib/text.js" ></script>
+<script src="../lib/require.js" ></script>
+<style>
+.paging{text-align:center;margin:30px 0;font-size:0;}
+.paging button,.paging input{display:inline-block;vertical-align: middle;border:1px solid #D6D6D6;border-radius:3px;background:#fff;color:#333;font-size:14px;margin:0 5px;max-width:60px;text-align:center;height:24px;line-height:1;}
+.paging button:hover{background:#E40014;color:#fff;border-color:#E40014;cursor: pointer;}
+.paging span{display:inline-block;vertical-align: middle;font-size:14px;color:#333;margin:0 3px;}
+</style>
+<script>
+//分页组件
+    avalon.component('ms-page', {
+        template: heredoc(function () {
+            /*
+             <div class="paging">
+             <button :click='@jump($event,"first")'>首页</button>
+             <button :click='@jump($event,"prev")'>上一页</button>
+             <button :click='@jump($event,"next")'>下一页</button>
+             <button :click='@jump($event,"last")'>尾页</button>
+             <span>第</span>
+             <input type="text" :duplex='@pageNow'>页
+             <span :click='@trunPage' style="cursor: pointer">跳转</span>
+             <span>{{@pageSize}}条/页</span>
+             <span>共{{@tolPage}}页</span>
+             </div>
+             */
+        }),
+        defaults: {
+            isShow:true,
+            tolPage:1,
+            pageNow:1,
+            pageSize:10,
+            onPageClick: avalon.noop,//在页面配置函数
+            jump:function (e,p) {
+                this.pageNow = this.toPage(p);
+                return this.onPageClick(e,this.pageNow);
+            },
+            trunPage:function (e,p) {
+                if(this.pageNow > this.tolPage){
+                    this.pageNow = this.tolPage;
+                }
+                return this.onPageClick(e,this.pageNow);
+            },
+            toPage : function (p) {
+                var cur = this.pageNow;
+                var max = this.tolPage;
+                switch (p) {
+                    case 'first':
+                        return 1;
+                    case 'prev':
+                        return Math.max(cur - 1, 1)/*从第一页开始*/
+                    case 'next':
+                        return Math.min(parseInt(cur) + 1, max)
+                    case 'last':
+                        return max;
+                    default:
+                        return p
+                }
+            }
+        },
+        soleSlot: 'text'
+    });
+	 function heredoc(fn) {
+        return fn.toString().replace(/^[^\/]+\/\*!?\s?/, '').
+        replace(/\*\/[^\/]+$/, '').trim().replace(/>\s*</g, '><')
+    }
+
+ var vm_newsList = avalon.define(
+        {
+            $id: "pager",
+            config:{
+                tolPage:10,
+                onPageClick:function (e,p) {
+                    jump(p)
+                },
+                isShow:true
+            },
+           
+        });
+</script>
+</head>
+<body >
+<div ms-controller="pager" class="ms-controller">
+
+
+    <wbr is='ms-page' ms-widget="@config" />
+
+
+
+<script>
+
+</script>
+</body>
+</html>

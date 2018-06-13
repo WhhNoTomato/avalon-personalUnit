@@ -1,0 +1,11 @@
+<p class="pages tc fs-0" :visible='@isShow'>
+    <a class="pages_p" href="javascript:;" :click='@jump($event,"prev")'> <img src='http://download.yxybb.com/project/LTPU/images/pre.png' /></a>
+    <a :for="el in @pagelist" :class="pageNow==el && 'on'" href="javascript:;" ms-click="jump($event,el)" >{{el}}</a>
+    <a class="pages_p" href="javascript:;" :click='@jump($event,"next")'> <img src='http://download.yxybb.com/project/LTPU/images/next.png' /> </a>
+             <span style="font-size: 14px" visible="@pageCount > 7">&nbsp;跳转到
+                <a id="pore" >
+                <input type="text"  id="pageInput" :duplex="@pageNow | change">
+                <img src="../img/search.png"  class="poab" style="cursor: pointer;top: 12px;right: 10px"  ms-click="@trunPage()">
+             </a>
+             页</span>
+</p>

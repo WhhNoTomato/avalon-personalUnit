@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>分页组件</title>
+<script src="../lib/jquery.js" ></script>
+<script src="../lib/avalon2.js" ></script>
+<script src="../lib/text.js" ></script>
+<script src="../lib/require.js" ></script>
+<style>
+.paging{text-align:center;margin:30px 0;font-size:0;}
+.paging button,.paging input{display:inline-block;vertical-align: middle;border:1px solid #D6D6D6;border-radius:3px;background:#fff;color:#333;font-size:14px;
+margin:0 5px;max-width:60px;text-align:center;height:24px;line-height:1;}
+.paging button:hover{background:#E40014;color:#fff;border-color:#E40014;cursor: pointer;}
+.paging span{display:inline-block;vertical-align: middle;font-size:14px;color:#333;margin:0 3px;}
+</style>
+<script>
+//分页组件
+    avalon.component('ms-page', {
+        template: require('text!../page1.html),
+        defaults: {
+            isShow:false,
+            tolPage:1,
+            pagelist:[],
+            pageNow:1,
+            pageSize:10,
+            onPageClick: avalon.noop,//在页面配置函数
+            jump:function (e,p) {
+                var cur = this.pageNow;
+                var max = this.tolPage;
+                switch (p) {
+                    case 'prev':
+                        this.pageNow = Math.max(cur - 1, 1);/*从第一页开始*/
+                        break;
+                    case 'next':
+                        this.pageNow = Math.min(parseInt(cur) + 1, max);
+                        break;
+                    case '...':
+                        break;
+                    default:
+                        this.pageNow = p
+                }
+                this.clickPage(this.pageNow);
+                return this.onPageClick(e,this.pageNow);
+            },
+            trunPage:function (e,p) {
+                if(this.pageNow > this.tolPage){
+                    this.pageNow = this.tolPage;
+                }
+                this.clickPage(this.pageNow)
+                return this.onPageClick(e,this.pageNow);
+            },
+            clickPage:function (data) {
+                var pagelist = [];
+                pagelist[0] = 1;
+                if (this.tolPage > 9) {
+                    if (data > 5) {
+                        pagelist[1] = "...";
+                        if (this.tolPage - data > 4) {
+                            pagelist[2] = data - 2;
+                            pagelist[3] = data - 1;
+                            pagelist[4] = data;
+                            pagelist[5] = parseInt(data) + 1;
+                            pagelist[6] = parseInt(data) + 2;
+                            pagelist[7] = "...";
+                            pagelist[8] = this.tolPage;
+                        } else {
+                            for (var i = 0; i < 7; i++) {
+                                pagelist[i + 2] = this.tolPage - 6 + i;
+                            }
+                        }
+                    } else {
+                        pagelist[0] = 1;
+                        pagelist[1] = 2;
+                        pagelist[2] = 3;
+                        pagelist[3] = 4;
+                        pagelist[4] = 5;
+                        pagelist[5] = 6;
+                        pagelist[6] = 7;
+                        pagelist[7] = "...";
+                        pagelist[8] = this.tolPage;
+                    }
+                    this.pagelist = pagelist;
+                } else {
+                    for (var i = 0; i < this.tolPage; i++) {
+                        pagelist[i] = i + 1;
+                    }
+                    this.pagelist = pagelist;
+                }
+            },
+            onReady:function () {
+                this.clickPage(1);
+            }
+        },
+        soleSlot: 'text'
+    });
+ var vm_newsList = avalon.define(
+        {
+            $id: "pager",
+            config:{
+                tolPage:10,
+                onPageClick:function (e,p) {
+                    jump(p)
+                },
+                isShow:true
+            },
+           
+        });
+</script>
+</head>
+<body >
+<div ms-controller="pager" class="ms-controller">
+
+
+    <wbr is='ms-page' ms-widget="@config" />
+
+
+
+<script>
+
+</script>
+</body>
+</html>
